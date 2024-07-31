@@ -1,7 +1,10 @@
-package cmd
+package main
 
-import "fmt"
+import "github.com/qvvan/short_urls/short_urls/internal/server"
 
+// @title URL Shortener API
+// @version 1.0
+// @description This is a URL shortener service.
 func main() {
-	fmt.Print("Запущено")
+	server.StartServer()
 }
