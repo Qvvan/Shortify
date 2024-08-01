@@ -1,14 +1,27 @@
 version: '3.8'
 
 services:
+  mongodb:
+    image: mongo:4.4
+    restart: always
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123qwe
+
   app:
     build: .
+    container_name: shortify_app
+    depends_on:
+      - mongodb
     ports:
       - "8080:8080"
-    depends_on:
-      - redis
+    environment:
+      MONGO_URI: mongodb://root:123qwe@mongo:27017
 
-  redis:
-    image: "redis:latest"
-    ports:
-      - "6379:6379"
+volumes:
+  mongo-data:
