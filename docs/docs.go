@@ -117,6 +117,7 @@ var SwaggerInfo = &swag.Spec{
 	RightDelim:       "}}",
 }
 
+// 📝 Изменения в docs.go для Swagger
 func init() {
 	swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
 }
