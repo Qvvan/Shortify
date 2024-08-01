@@ -13,7 +13,6 @@ git clone https://github.com/yourusername/shortify.git
 cd shortify
 ```
 ### 2. Создание файла окружения
-
 Создайте файл .env в корневом каталоге и добавьте следующее:
 ```
 MONGO_INITDB_ROOT_USERNAME=root
