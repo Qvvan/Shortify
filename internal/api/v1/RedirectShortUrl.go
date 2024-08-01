@@ -14,7 +14,7 @@ import (
 )
 
 // RedirectShortUrl godoc
-// @Summary Redirect to the long URL from the short URL
+// @Summary Redirect to the long URL from the short URL.
 // @Description Redirects to the long URL using the short URL
 // @Tags urls
 // @Accept  json

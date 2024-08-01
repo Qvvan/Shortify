@@ -19,7 +19,7 @@ import (
 const baseURL = "http://localhost:8080/"
 
 // CreateShortUrl godoc
-// @Summary Create a short URL
+// @Summary Create a short URL.
 // @Description Create a new short URL from a long URL
 // @Tags urls
 // @Accept  json
