@@ -41,7 +41,7 @@ func InitMongo() {
 		logger.Fatal("Failed to ping MongoDB:", err)
 	}
 
-	logger.Info("MongoDB connected successfully")
+	logger.Info("MongoDB connected successfully!")
 }
 
 // GetClient возвращает экземпляр клиента MongoDB
