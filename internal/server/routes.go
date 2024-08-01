@@ -9,6 +9,7 @@ import (
 	"github.com/swaggo/gin-swagger"
 )
 
+// Инициализация маршрутов
 func InitRoutes() *gin.Engine {
 	router := gin.New()
 	router.Use(logger.GinLoggerMiddleware())
