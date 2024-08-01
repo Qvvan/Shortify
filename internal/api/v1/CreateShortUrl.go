@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"Shortify/internal/logger"
 	"Shortify/internal/models"
 	"Shortify/internal/mongodb"
 	"context"
@@ -9,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 	"net/url"
 	"time"
@@ -17,18 +18,31 @@ import (
 
 const baseURL = "http://localhost:8080/"
 
+// CreateShortUrl godoc
+// @Summary Create a short URL
+// @Description Create a new short URL from a long URL
+// @Tags urls
+// @Accept  json
+// @Produce  json
+// @Param url query string true "The long URL to shorten"
+// @Success 201 {object} map[string]string "Successfully created short URL"
+// @Failure 400 {object} map[string]string "Invalid URL or missing parameter"
+// @Router /api/v1/shortify [post]
 func CreateShortUrl(ctx *gin.Context) {
 	start := time.Now()
 	var newUrl models.Url
+	logger := logger.GetLogger()
 
 	uri := ctx.Query("url")
 	if uri == "" {
+		logger.Warn("URL parameter is missing", zap.String("method", "CreateShortUrl"))
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "URL parameter is missing"})
 		return
 	}
 
 	_, err := url.ParseRequestURI(uri)
 	if err != nil {
+		logger.Warn("Invalid URL", zap.String("url", uri), zap.String("method", "CreateShortUrl"))
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL"})
 		return
 	}
@@ -41,6 +55,7 @@ func CreateShortUrl(ctx *gin.Context) {
 	err = collection.FindOne(context.Background(), filter).Decode(&existingUrl)
 	if err == nil {
 		fullShortUrl := baseURL + existingUrl.ShortUrl
+		logger.Info("Short URL already exists", zap.String("short_url", fullShortUrl), zap.String("method", "CreateShortUrl"))
 		ctx.JSON(http.StatusOK, gin.H{"short_url": fullShortUrl})
 		return
 	}
@@ -50,38 +65,38 @@ func CreateShortUrl(ctx *gin.Context) {
 	newUrl.CreatedAt = start
 	newUrl.LastVisit = start
 
-	// Сохраняем новый URL в базе данных
 	_, err = collection.InsertOne(context.Background(), newUrl)
 	if err != nil {
-		log.Fatal("Failed to insert new URL:", err)
+		logger.Fatal("Failed to insert new URL", zap.Error(err))
 	}
 
 	fullShortUrl := baseURL + newUrl.ShortUrl
+	logger.Info("Short URL created", zap.String("short_url", fullShortUrl), zap.String("method", "CreateShortUrl"), zap.Duration("duration", time.Since(start)))
 	ctx.JSON(http.StatusCreated, gin.H{"short_url": fullShortUrl})
 }
 
 func generateUniqueShortUrl(collection *mongo.Collection) string {
+	logger := logger.GetLogger()
 	for {
 		shortUrl := generateShortUrl()
-		filter := bson.M{"short_url": shortUrl}
+		filter := bson.M{"shorturl": shortUrl}
 
-		// Используем FindOne вместо CountDocuments
 		var result bson.M
 		err := collection.FindOne(context.Background(), filter).Decode(&result)
 		if err != nil && err == mongo.ErrNoDocuments {
-			// Если документ не найден, короткий URL уникален
 			return shortUrl
 		} else if err != nil {
-			log.Fatal("Failed to check if short URL is unique:", err)
+			logger.Fatal("Failed to check if short URL is unique", zap.Error(err))
 		}
 	}
 }
 
 func generateShortUrl() string {
-	b := make([]byte, 6) // 6 байт для генерации строки
+	logger := logger.GetLogger()
+	b := make([]byte, 6)
 	_, err := rand.Read(b)
 	if err != nil {
-		log.Fatal("Failed to generate random bytes:", err)
+		logger.Fatal("Failed to generate random bytes", zap.Error(err))
 	}
 	return base64.URLEncoding.EncodeToString(b)
 }

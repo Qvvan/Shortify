@@ -1,0 +1,60 @@
+info:
+  contact: {}
+paths:
+  /{shortUrl}:
+    get:
+      consumes:
+      - application/json
+      description: Redirects to the long URL using the short URL
+      parameters:
+      - description: The short URL
+        in: path
+        name: shortUrl
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Successfully redirected
+          schema:
+            type: object
+        "404":
+          description: Short URL not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Redirect to the long URL from the short URL
+      tags:
+      - urls
+  /api/v1/shortify:
+    post:
+      consumes:
+      - application/json
+      description: Create a new short URL from a long URL
+      parameters:
+      - description: The long URL to shorten
+        in: query
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created short URL
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid URL or missing parameter
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a short URL
+      tags:
+      - urls
+swagger: "2.0"

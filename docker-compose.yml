@@ -6,12 +6,12 @@ services:
     restart: always
     container_name: mongodb
     ports:
-      - "27017:27017"
+      - ${MONGO_PORTS}:${MONGO_PORTS}
     volumes:
       - mongo-data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 123qwe
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
 
   app:
     build: .
@@ -19,9 +19,9 @@ services:
     depends_on:
       - mongodb
     ports:
-      - "8080:8080"
+      - ${WEB_PORTS}:${WEB_PORTS}
     environment:
-      MONGO_URI: mongodb://root:123qwe@mongo:27017
+      MONGO_URI: ${MONGO_URI}
 
 volumes:
   mongo-data:
