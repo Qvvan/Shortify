@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// GinLoggerMiddleware возвращает middleware для логирования запросов и ответов
+// GinLoggerMiddleware возвращает middleware для логирования запросов и ответов.
 func GinLoggerMiddleware() gin.HandlerFunc {
 	log := GetLogger()
 

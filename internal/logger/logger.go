@@ -9,7 +9,7 @@ var (
 	logger *zap.Logger
 )
 
-// InitLogger инициализирует логгер Zap
+// InitLogger инициализирует логгер Zap.
 func InitLogger() {
 	cfg := zap.NewProductionConfig()
 	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
