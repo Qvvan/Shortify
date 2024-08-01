@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Основной файл
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	logger.InitLogger()
